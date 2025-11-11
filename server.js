@@ -6,7 +6,7 @@ const express = require("express");
 const path = require("path");
 const mysql = require("mysql2");
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 // =======================
 // Fixed Admin Credentials
@@ -20,10 +20,14 @@ app.use(express.urlencoded({ extended: true }));
 
 // Database connection(pool)
 const db = mysql.createPool({
-  host: "localhost",
-  user: "root",
-  password: "",
-  database: "votingsystem",
+  host: process.env.DB_HOST || "localhost",
+  user: process.env.DB_USER || "root",
+  password: process.env.DB_PASSWORD || "",
+  database: process.env.DB_NAME || "votingsystem",
+  port: process.env.DB_PORT || 3306,
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
 });
 
 db.getConnection((err, connection) => {
@@ -98,7 +102,7 @@ app.get("/uploadWinners", (req, res) => {
 });
 
 app.get("/generateReports", (req, res) => {
-  res.redirect("/dashboard");
+  res.redirect("/create-report");
 });
 
 app.get("/settings", (req, res) => {
@@ -365,12 +369,14 @@ app.get("/api/winners", (req, res) => {
     res.json(results);
   });
 });
+
 app.get("/api/feedback", (req, res) => {
   db.query("SELECT * FROM feedback", (err, results) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json(results);
   });
 });
+
 // Get all election winners
 app.get("/api/electionwinners", (req, res) => {
   db.query("SELECT * FROM election_winners", (err, results) => {
@@ -434,10 +440,7 @@ app.get("/api/nonregisteredvoters", (req, res) => {
     res.json(results);
   });
 });
-// In your server.js, update the generateReports route:
-app.get("/generateReports", (req, res) => {
-  res.redirect("/create-report"); // Changed from /dashboard to /create-report
-});
+
 // Get all media houses
 app.get("/api/mediahouses", (req, res) => {
   db.query("SELECT * FROM media_houses", (err, results) => {
@@ -450,6 +453,6 @@ app.get("/api/mediahouses", (req, res) => {
 // Server Start
 // =======================
 app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
+  console.log(`Server running on port ${PORT}`);
   console.log(`Create reports at: http://localhost:${PORT}/create-report`);
 });
