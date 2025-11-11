@@ -1,0 +1,672 @@
+/* ==============================
+   LOGIN PAGE STYLES (unchanged)
+================================= */
+:root {
+    --blue: #0a1;
+    --grey: #6c757d;
+    --bg: #f0f0f0;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    height: 100%;
+}
+
+.page-container {
+    display: grid;
+    grid-template-rows: auto auto 1fr auto;
+    min-height: 100vh;
+}
+
+/* Topbar for login page */
+.topbar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #000;
+    color: #fff;
+    font-size: 0.9rem;
+    padding: 0.25rem 0;
+}
+.topbar a {
+    color: #fff;
+    text-decoration: none;
+}
+.topbar a:hover {
+    color: #ccc;
+}
+
+/* Navbar */
+.navbar {
+    background: #fff !important;
+    z-index: 1050;
+    padding: 0.5rem 0;
+}
+.navbar .navbar-brand {
+    color: #808080 !important;
+    font-weight: 700;
+    font-size: 18px;
+}
+.navbar-brand img {
+    width: 50px;
+    height: auto;
+    margin-right: 0.5rem;
+}
+.nav-link {
+    font-weight: 600;
+    color: #555 !important;
+}
+.nav-link:hover {
+    color: #000 !important;
+}
+
+/* Background Section */
+.background {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: #fff;
+    min-height: 100vh;
+    overflow: hidden;
+}
+.background-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+}
+.blur-bg {
+    filter: blur(5px);
+}
+
+/* Login Box */
+.background-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    height: 100%;
+}
+.login-box {
+    max-width: 400px;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.4);
+    backdrop-filter: blur(5px);
+}
+.login-box .form-label {
+    font-weight: 500;
+}
+.login-box .form-control {
+    background: rgba(255,255,255,0.3);
+    border: none;
+    color: #fff;
+}
+.login-box .form-control::placeholder {
+    color: #eee;
+}
+
+/* Buttons */
+.option-btn {
+    padding: 12px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    border-radius: 8px;
+    background: var(--grey);
+    color: #fff;
+    border: none;
+}
+.option-btn:hover {
+    background: #495057;
+}
+
+/* Footer for login */
+footer.footer {
+    background: #000;
+    color: #fff;
+    padding: 10px 0;
+    font-size: 0.85rem;
+}
+
+/* ==============================
+   DASHBOARD PAGE STYLES (exactly as provided)
+================================= */
+:root {
+    --blue: #0a1;
+    --grey: #6c757d;
+    --bg: #f0f0f0;
+    --sidebar-bg-start: #1f2937;
+    --sidebar-bg-end: #111827;
+    --sidebar-hover-bg: rgba(255, 255, 255, 0.1);
+}
+
+/* GENERAL */
+html, body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    height: 100%;
+    background-color: var(--bg);
+}
+.page-container {
+    display: grid;
+    grid-template-rows: auto auto 1fr auto;
+    min-height: 100vh;
+}
+
+/* SIDEBAR */
+.sidebar {
+    background-color: var(--sidebar-bg-start);
+    color: #ffffff;
+    
+    min-height: 100vh;
+    width: 300px;
+    padding: 20px 15px;
+    box-shadow: 3px 0 10px rgba(0, 0, 0, 0.3);
+    transition: background 0.3s ease;
+}
+.sidebar .nav-link {
+    color: #ffffff;       /* pure white text/icons */
+    font-weight: 600;     /* make them bolder */
+    padding: 10px 12px;
+    border-radius: 5px;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+.sidebar .nav-link:hover {
+    background: rgba(255, 255, 255, 0.2);  /* lighter hover */
+    color: #ffffff;   /* stay bright white */
+}
+
+/* TOPBAR */
+.topbar {
+    background: linear-gradient(135deg, #111827, #1f2937);
+    color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 1rem;
+}
+.topbar a {
+    color: #fff;
+    text-decoration: none;
+}
+.topbar a:hover {
+    color: #ccc;
+}
+
+/* STATISTICS HEADING */
+.stats-heading {
+    font-weight: bold;
+    font-size: 1.8rem;
+    text-transform: uppercase;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+/* DASHBOARD CARDS */
+.dashboard-card {
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    background: #fff;
+}
+.dashboard-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    background-color: #f0f9ff;
+    border-color: #38bdf8;
+}
+.dashboard-card:active {
+    transform: translateY(-2px);
+    background-color: #e0f2fe;
+}
+.card-content {
+    padding: 20px;
+    margin-top: 20px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background: #fff;
+}
+
+/* BACK BUTTON */
+.back-button {
+    margin-bottom: 20px;
+}
+
+/* HIDE ELEMENTS */
+.d-none {
+    display: none !important;
+}
+
+/* CARD CONTENT ANIMATION */
+#card-content {
+    animation: fadeIn 0.3s ease;
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* COUNTDOWN TIMER */
+.countdown {
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+.countdown h5 {
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+.countdown .time-box {
+    display: inline-block;
+    min-width: 70px;
+    padding: 10px;
+    margin: 0 5px;
+    background: var(--grey);
+    color: #fff;
+    border-radius: 8px;
+    font-size: 1.2rem;
+}
+
+/* FOOTER */
+footer.footer {
+    background: #000;
+    color: #fff;
+    padding: 20px 0;
+    margin-top: auto;
+    font-size: 0.85rem;
+}
+footer a {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+    margin-bottom: 5px;
+}
+footer a:hover {
+    color: #ccc;
+}
+footer h6 {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+/* ==============================
+   FORCE BRIGHT WHITE SIDEBAR ITEMS
+   Paste this at the END of dashboard.css
+================================= */
+
+/* keep the existing dark gradient but remove any accidental dimming */
+.sidebar {
+  background: linear-gradient(135deg, #111827, #1f2937) !important;
+  color: #ffffff !important;
+  filter: none !important;               /* remove blur/filters */
+  -webkit-filter: none !important;
+  opacity: 1 !important;                 /* ensure no inherited opacity */
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+/* make every link and its children show pure white and full opacity */
+.sidebar .nav-link,
+.sidebar .nav-link * {
+  color: #ffffff !important;             /* pure white */
+  opacity: 1 !important;                 /* override any faded opacity */
+  filter: none !important;
+  text-shadow: none !important;          /* remove soft/glow if present */
+}
+
+/* ensure icons inherit that white color */
+.sidebar .nav-link i,
+.sidebar .nav-link svg {
+  color: inherit !important;
+  opacity: 1 !important;
+  filter: none !important;
+}
+
+/* stronger visible hover (keeps white text) */
+.sidebar .nav-link:hover,
+.sidebar .nav-link:focus {
+  background: rgba(255,255,255,0.06) !important; /* subtle brighten on hover */
+  color: #ffffff !important;
+  text-decoration: none !important;
+}
+
+/* make logo/title text bright white as well */
+.sidebar .text-center h5,
+.sidebar .text-center img,
+.sidebar .text-center img + h5,
+.sidebar h5 {
+  color: #ffffff !important;
+  opacity: 1 !important;
+}
+
+/* sometimes Bootstrap utility classes (e.g., .text-secondary) dim icons;
+   override that inside sidebar specifically */
+.sidebar .text-secondary {
+  color: #ffffff !important;
+  opacity: 1 !important;
+}
+
+/* make sure any badges or smaller text are readable */
+.sidebar small,
+.sidebar .badge {
+  color: #ffffff !important;
+  opacity: 1 !important;
+}
+
+
+/* Reports Page Styles - Using Dashboard Colors Only */
+:root {
+    --blue: #0a1;
+    --grey: #6c757d;
+    --bg: #f0f0f0;
+    --sidebar-bg-start: #1f2937;
+    --sidebar-bg-end: #111827;
+    --sidebar-hover-bg: rgba(255, 255, 255, 0.1);
+    --white: #ffffff;
+    --black: #000000;
+    --light-grey: #ccc;
+    --border-color: #e5e7eb;
+    --dark-border: #ddd;
+}
+
+.reports-body {
+    font-family: Arial, sans-serif;
+    background-color: var(--bg);
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.reports-header {
+    background: linear-gradient(135deg, #111827, #1f2937);
+    color: var(--white);
+    padding: 1rem 0;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+}
+
+.reports-container {
+    flex: 1;
+    padding: 2rem 0;
+}
+
+.form-container {
+    background: var(--white);
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    padding: 2rem;
+    margin-top: 1rem;
+    border: 1px solid var(--dark-border);
+}
+
+.btn-mec {
+    background: var(--grey);
+    color: var(--white);
+    border: none;
+    padding: 10px 25px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    font-weight: 600;
+}
+
+.btn-mec:hover {
+    background: #495057;
+    color: var(--white);
+    transform: translateY(-1px);
+}
+
+.form-label {
+    font-weight: 600;
+    color: var(--black);
+    margin-bottom: 8px;
+}
+
+.required::after {
+    content: " *";
+    color: #dc3545;
+}
+
+.form-control, .form-select {
+    border: 1px solid var(--dark-border);
+    border-radius: 8px;
+    padding: 10px 15px;
+    transition: all 0.2s ease;
+    background: var(--white);
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--grey);
+    box-shadow: 0 0 0 0.2rem rgba(108, 117, 125, 0.25);
+}
+
+.form-text {
+    color: var(--grey);
+    font-size: 0.875rem;
+    margin-top: 5px;
+}
+
+/* Alert Styles */
+.alert {
+    border: none;
+    border-radius: 8px;
+    padding: 12px 20px;
+    margin-bottom: 1rem;
+    border-left: 4px solid;
+}
+
+.alert-success {
+    background-color: #f0f9ff;
+    color: var(--black);
+    border-left-color: var(--blue);
+}
+
+.alert-danger {
+    background-color: #ffe0e0;
+    color: #dc3545;
+    border-left-color: #dc3545;
+}
+
+.alert-warning {
+    background-color: #fff3cd;
+    color: #856404;
+    border-left-color: #ffc107;
+}
+
+/* Footer Styles */
+.reports-footer {
+    background: var(--black);
+    color: var(--white);
+    padding: 20px 0;
+    margin-top: auto;
+    font-size: 0.85rem;
+}
+
+.reports-footer a {
+    color: var(--white);
+    text-decoration: none;
+    display: block;
+    margin-bottom: 8px;
+    transition: color 0.2s;
+}
+
+.reports-footer a:hover {
+    color: var(--light-grey);
+}
+
+.footer-col h6 {
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: var(--white);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .form-container {
+        padding: 1.5rem;
+        margin-top: 0.5rem;
+    }
+    
+    .reports-container {
+        padding: 1rem 0;
+    }
+    
+    .btn-mec {
+        padding: 8px 20px;
+    }
+}
+
+/* Loading States */
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.spinner-border-sm {
+    width: 1rem;
+    height: 1rem;
+}
+
+/* Back Button */
+.btn-outline-secondary {
+    border-color: var(--grey);
+    color: var(--grey);
+    transition: all 0.2s;
+    border-radius: 8px;
+}
+
+.btn-outline-secondary:hover {
+    background-color: var(--grey);
+    color: var(--white);
+}
+
+/* Validation Styles */
+.is-invalid {
+    border-color: #dc3545 !important;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
+}
+
+/* Text Colors */
+.text-primary {
+    color: var(--black) !important;
+}
+
+.text-muted {
+    color: var(--grey) !important;
+}
+
+/* Card-like elements */
+.stats-card {
+    background: var(--white);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    border: 1px solid var(--dark-border);
+}
+
+/* Animation matching dashboard */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.form-container {
+    animation: fadeIn 0.3s ease;
+}
+
+/* Hover effects matching dashboard */
+.form-container:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Header text styling */
+.reports-header h4 {
+    font-weight: 700;
+    margin: 0;
+}
+
+/* Form section styling */
+.border-top {
+    border-top: 1px solid var(--dark-border) !important;
+}
+
+/* Focus states */
+.form-control:focus, .form-select:focus {
+    background-color: var(--white);
+}
+
+/* Readonly field styling */
+.form-control[readonly] {
+    background-color: #f8f9fa;
+    border-color: var(--border-color);
+}
+
+/* Button group spacing */
+.btn-group-sm .btn {
+    margin: 0 2px;
+}
+
+/* Table styles to match dashboard */
+.table {
+    background: var(--white);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.table th {
+    background: linear-gradient(135deg, #111827, #1f2937);
+    color: var(--white);
+    border: none;
+    padding: 12px 15px;
+}
+
+.table td {
+    padding: 12px 15px;
+    border-color: var(--border-color);
+}
+
+/* Badge styles */
+.badge {
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 6px;
+}
+
+.badge.bg-light {
+    background-color: var(--white) !important;
+    color: var(--black) !important;
+}
+
+/* Utility classes */
+.fw-bold {
+    font-weight: 700 !important;
+}
+
+.text-center {
+    text-align: center !important;
+}
+
+.text-md-start {
+    text-align: left !important;
+}
+
+@media (max-width: 768px) {
+    .text-md-start {
+        text-align: center !important;
+    }
+}

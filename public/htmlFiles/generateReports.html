@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Report - MEC</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="/cssFiles/dashboard.css">
+  <link rel="stylesheet" href="/cssFiles/reports.css">
+</head>
+<body class="reports-body">
+  <!-- Header -->
+  <div class="reports-header">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-md-6">
+          <div class="d-flex align-items-center">
+            <img src="/images/cropped-mec_logo.png" alt="MEC Logo" width="50" class="me-3">
+            <h4 class="mb-0">MALAWI ELECTORAL COMMISSION</h4>
+          </div>
+        </div>
+        <div class="col-md-6 text-md-end">
+          <span class="fw-bold">Report Management System</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="reports-container">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-10">
+          <div class="form-container">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <h3 class="fw-bold">
+                <i class="fas fa-file-alt me-2"></i>Create New Report
+              </h3>
+              <!-- FIXED: Back button goes to dashboard -->
+              <a href="/dashboard" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+              </a>
+            </div>
+
+            <!-- Success/Error Messages -->
+            <div id="alert-container"></div>
+
+            <form id="createReportForm">
+              <div class="row">
+                <div class="col-md-12 mb-3">
+                  <label for="title" class="form-label required">Report Title</label>
+                  <input type="text" class="form-control" id="title" name="title" 
+                         placeholder="Enter report title" required maxlength="255">
+                  <div class="form-text">Maximum 255 characters</div>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                  <label for="election_id" class="form-label required">Election</label>
+                  <select class="form-select" id="election_id" name="election_id" required>
+                    <option value="">Select Election</option>
+                    <!-- Options will be populated by JavaScript -->
+                  </select>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                  <label for="created_by" class="form-label">Created By</label>
+                  <input type="text" class="form-control" id="created_by" readonly 
+                         value="Samson Reissner (ID: 1)">
+                  <input type="hidden" name="created_by" value="1">
+                </div>
+
+                <div class="col-12 mb-3">
+                  <label for="body" class="form-label required">Report Content</label>
+                  <textarea class="form-control" id="body" name="body" rows="12" 
+                            placeholder="Enter detailed report content..." required></textarea>
+                  <div class="form-text">Provide comprehensive details for the report</div>
+                </div>
+              </div>
+
+              <div class="d-flex justify-content-between mt-4 pt-3 border-top">
+                <button type="button" class="btn btn-outline-secondary" onclick="clearForm()">
+                  <i class="fas fa-eraser me-2"></i>Clear Form
+                </button>
+                <button type="submit" class="btn btn-mec" id="submitBtn">
+                  <i class="fas fa-save me-2"></i>Create Report
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="reports-footer">
+    <div class="container d-flex flex-column flex-md-row justify-content-between text-center text-md-start">
+      <div class="footer-col mb-2 mb-md-0">
+        <h6>About MEC</h6>
+        <a href="#">About us</a>
+        <a href="#">Vision & Mission</a>
+        <a href="#">Commissioners</a>
+        <a href="#">Executive Management</a>
+        <a href="#">Contact us</a>
+      </div>
+      <div class="footer-col mb-2 mb-md-0">
+        <h6>Elections</h6>
+        <a href="#">2020 Presidential Results</a>
+        <a href="#">2019 Tripartite Results</a>
+        <a href="#">2019 Voter Registration Stats</a>
+        <a href="#">2014 Elections</a>
+        <a href="#">2009 General Elections</a>
+      </div>
+      <div class="footer-col">
+        <h6>Contact Us</h6>
+        <a href="#"><i class="fas fa-map-marker-alt me-1"></i>Head Office, Chisankho House, Private Bag 113, Lilongwe, Malawi</a>
+        <a href="tel:+2651822033"><i class="fas fa-phone me-1"></i>Phone: (265) 1 822 033</a>
+        <a href="fax:+2651821846"><i class="fas fa-fax me-1"></i>Fax: (265) 1 821 846</a>
+        <a href="mailto:ceo@mec.org.mw"><i class="fas fa-envelope me-1"></i>ceo@mec.org.mw</a>
+      </div>
+    </div>
+    <div class="text-center mt-3">&copy; 2025 Malawi Electoral Commission</div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <script>
+    // API Base URL
+    const API_BASE_URL = 'http://localhost:3000/api';
+
+    // Initialize the form
+    document.addEventListener('DOMContentLoaded', function() {
+      // Fetch elections from API instead of using sample data
+      fetchElections();
+      
+      // Form submission handler
+      document.getElementById('createReportForm').addEventListener('submit', handleFormSubmit);
+      
+      // Add input validation
+      document.getElementById('title').addEventListener('input', validateTitle);
+      document.getElementById('body').addEventListener('input', validateBody);
+    });
+
+    // Fetch elections from API
+    async function fetchElections() {
+      try {
+        const response = await fetch('/api/elections');
+        const elections = await response.json();
+        
+        if (response.ok) {
+          populateElectionDropdown(elections);
+        } else {
+          throw new Error('Failed to fetch elections');
+        }
+      } catch (error) {
+        console.error('Error fetching elections:', error);
+        // Fallback to sample data if API fails
+        const sampleElections = [
+          { election_id: 1, name: "2025 Presidential Election", election_date: "2025-05-20" },
+          { election_id: 2, name: "2024 Local Government Elections", election_date: "2024-03-15" },
+          { election_id: 3, name: "2023 By-Elections - Lilongwe", election_date: "2023-11-10" }
+        ];
+        populateElectionDropdown(sampleElections);
+      }
+    }
+
+    // Populate election dropdown
+    function populateElectionDropdown(elections) {
+      const select = document.getElementById('election_id');
+      select.innerHTML = '<option value="">Select Election</option>';
+      
+      elections.forEach(election => {
+        const option = document.createElement('option');
+        option.value = election.election_id;
+        option.textContent = `${election.name} (${new Date(election.election_date).toLocaleDateString()})`;
+        select.appendChild(option);
+      });
+    }
+
+    // Handle form submission
+    async function handleFormSubmit(event) {
+      event.preventDefault();
+      
+      const submitBtn = document.getElementById('submitBtn');
+      const originalText = submitBtn.innerHTML;
+      
+      // Validate form
+      if (!validateForm()) {
+        return;
+      }
+
+      // Disable submit button and show loading state
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Creating Report...';
+
+      try {
+        const formData = new FormData(event.target);
+        const data = Object.fromEntries(formData.entries());
+        
+        // Convert election_id to integer
+        data.election_id = parseInt(data.election_id);
+        data.created_by = parseInt(data.created_by);
+
+        console.log('Submitting report data:', data);
+
+        const response = await fetch(`${API_BASE_URL}/reports`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+
+        if (response.ok && result.success) {
+          showAlert('Report created successfully! Redirecting to dashboard...', 'success');
+          clearForm();
+          
+          // Redirect to dashboard after 2 seconds
+          setTimeout(() => {
+            window.location.href = '/dashboard';
+          }, 2000);
+        } else {
+          throw new Error(result.message || 'Failed to create report');
+        }
+      } catch (error) {
+        console.error('Error creating report:', error);
+        showAlert(`Error: ${error.message}`, 'danger');
+      } finally {
+        // Re-enable submit button
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalText;
+      }
+    }
+
+    // Validate form
+    function validateForm() {
+      const title = document.getElementById('title').value.trim();
+      const body = document.getElementById('body').value.trim();
+      const electionId = document.getElementById('election_id').value;
+
+      let isValid = true;
+
+      if (!title) {
+        showAlert('Please enter a report title', 'warning');
+        document.getElementById('title').focus();
+        isValid = false;
+      } else if (title.length > 255) {
+        showAlert('Title must be 255 characters or less', 'warning');
+        document.getElementById('title').focus();
+        isValid = false;
+      }
+
+      if (!electionId) {
+        showAlert('Please select an election', 'warning');
+        document.getElementById('election_id').focus();
+        isValid = false;
+      }
+
+      if (!body) {
+        showAlert('Please enter report content', 'warning');
+        document.getElementById('body').focus();
+        isValid = false;
+      } else if (body.length < 10) {
+        showAlert('Report content should be more detailed (at least 10 characters)', 'warning');
+        document.getElementById('body').focus();
+        isValid = false;
+      }
+
+      return isValid;
+    }
+
+    // Validate title input
+    function validateTitle() {
+      const titleInput = document.getElementById('title');
+      const title = titleInput.value.trim();
+      
+      if (title.length > 255) {
+        titleInput.classList.add('is-invalid');
+      } else {
+        titleInput.classList.remove('is-invalid');
+      }
+    }
+
+    // Validate body input
+    function validateBody() {
+      const bodyInput = document.getElementById('body');
+      const body = bodyInput.value.trim();
+      
+      if (body.length < 10 && body.length > 0) {
+        bodyInput.classList.add('is-invalid');
+      } else {
+        bodyInput.classList.remove('is-invalid');
+      }
+    }
+
+    // Show alert message
+    function showAlert(message, type) {
+      const alertContainer = document.getElementById('alert-container');
+      const alert = document.createElement('div');
+      alert.className = `alert alert-${type} alert-dismissible fade show`;
+      alert.innerHTML = `
+        <i class="fas ${getAlertIcon(type)} me-2"></i>
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      `;
+      alertContainer.appendChild(alert);
+
+      // Auto remove alert after 5 seconds
+      setTimeout(() => {
+        if (alert.parentNode) {
+          alert.remove();
+        }
+      }, 5000);
+    }
+
+    // Get appropriate icon for alert type
+    function getAlertIcon(type) {
+      switch(type) {
+        case 'success': return 'fa-check-circle';
+        case 'danger': return 'fa-exclamation-circle';
+        case 'warning': return 'fa-exclamation-triangle';
+        default: return 'fa-info-circle';
+      }
+    }
+
+    // Clear form
+    function clearForm() {
+      document.getElementById('createReportForm').reset();
+      document.getElementById('created_by').value = 'Samson Reissner (ID: 1)';
+      const alerts = document.querySelectorAll('.alert');
+      alerts.forEach(alert => alert.remove());
+      
+      // Remove validation classes
+      document.getElementById('title').classList.remove('is-invalid');
+      document.getElementById('body').classList.remove('is-invalid');
+    }
+  </script>
+</body>
+</html>

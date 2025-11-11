@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="/cssFiles/dashboard.css">
+</head>
+<body>
+  <div class="d-flex" id="dashboard-wrapper">
+    <!-- Sidebar -->
+    <nav class="sidebar text-white p-3">
+      <div class="text-center mb-4">
+        <img src="/images/cropped-mec_logo.png" alt="MEC Logo" width="50" class="mb-2">
+        <h5 class="fw-bold">MALAWI ELECTORAL COMMISSION</h5>
+      </div>
+      <ul class="nav flex-column">
+        <li class="nav-item mb-2"><a class="nav-link text-white" href="/mUsers"><i class="fas fa-users me-2"></i>Manage Users</a></li>
+        <li class="nav-item mb-2"><a class="nav-link text-white" href="/accreditation"><i class="fas fa-id-card me-2"></i>Accreditation</a></li>
+        <li class="nav-item mb-2"><a class="nav-link text-white" href="/complaints"><i class="fas fa-exclamation-triangle me-2"></i>Complaints</a></li>
+        <li class="nav-item mb-2"><a class="nav-link text-white" href="/security"><i class="fas fa-shield-alt me-2"></i>Security</a></li>
+        <li class="nav-item mb-2"><a class="nav-link text-white" href="/userfeedback"><i class="fas fa-comments me-2"></i>User Feedback</a></li>
+        
+        <!-- Generate Reports - Fixed to link to create-report page -->
+        <li class="nav-item mb-2">
+          <a class="nav-link text-white" href="/generateReports">
+            <i class="fas fa-file-alt me-2"></i>Generate Reports
+          </a>
+        </li>
+        
+        <li class="nav-item mb-2"><a class="nav-link text-white" href="/settings"><i class="fas fa-sliders-h me-2"></i>Settings</a></li>
+        <li class="nav-item"><a class="nav-link text-white" href="/logout"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+      </ul>
+    </nav>
+
+    <!-- Main content -->
+    <div class="main-content flex-grow-1 d-flex flex-column">
+      <!-- Topbar -->
+      <header class="topbar d-flex justify-content-between align-items-center px-4 py-2">
+        <h4 class="mb-0"><i class="fas fa-tachometer-alt me-2"></i>Admin Dashboard</h4>
+        <div class="d-flex align-items-center">
+          <img src="  /images/IMG-20240805-WAOOO5.jpg" alt="Admin Profile" class="rounded-circle me-2" width="40" height="40">
+          <span>Annabel Mtalimanja</span>
+        </div>
+      </header>                      
+
+<section class="p-4 flex-grow-1">
+
+  <!-- CATEGORY CARDS -->
+  <div id="category-cards" class="row g-4">
+    <div class="col-md-6 col-lg-3">
+      <div class="card dashboard-card shadow-sm h-100 text-center p-3 category-card" data-category="setup">
+        <i class="fas fa-cogs fa-2x mb-2 text-secondary"></i>
+        <h5>Setup & Administration</h5>
+      </div>
+    </div>
+
+    <div class="col-md-6 col-lg-3">
+      <div class="card dashboard-card shadow-sm h-100 text-center p-3 category-card" data-category="elections">
+        <i class="fas fa-vote-yea fa-2x mb-2 text-secondary"></i>
+        <h5>Elections Management</h5>
+      </div>
+    </div>
+
+    <div class="col-md-6 col-lg-3">
+      <div class="card dashboard-card shadow-sm h-100 text-center p-3 category-card" data-category="results">
+        <i class="fas fa-file-alt fa-2x mb-2 text-secondary"></i>
+        <h5>Results & Reporting</h5>
+      </div>
+    </div>
+
+    <div class="col-md-6 col-lg-3">
+      <div class="card dashboard-card shadow-sm h-100 text-center p-3 category-card" data-category="audit">
+        <i class="fas fa-clipboard-list fa-2x mb-2 text-secondary"></i>
+        <h5>Audit & Logs</h5>
+      </div>
+    </div>
+
+    <div class="col-md-6 col-lg-3">
+      <div class="card dashboard-card shadow-sm h-100 text-center p-3 category-card" data-category="transport">
+        <i class="fas fa-truck fa-2x mb-2 text-secondary"></i>
+        <h5>Transport & Logistics</h5>
+      </div>
+    </div>
+
+    <div class="col-md-6 col-lg-3">
+      <div class="card dashboard-card shadow-sm h-100 text-center p-3 category-card" data-category="winners">
+        <i class="fas fa-trophy fa-2x mb-2 text-secondary"></i>
+        <h5>Winners</h5>
+      </div>
+    </div>
+
+    <div class="col-md-6 col-lg-3">
+      <div class="card dashboard-card shadow-sm h-100 text-center p-3 category-card" data-category="votes">
+        <i class="fas fa-chart-bar fa-2x mb-2 text-secondary"></i>
+        <h5>Votes & Ballots</h5>
+      </div>
+    </div>
+
+    <!-- ADDED NEW CARDS -->
+    <div class="col-md-6 col-lg-3">
+      <div class="card dashboard-card shadow-sm h-100 text-center p-3 category-card" data-category="accreditation">
+        <i class="fas fa-id-card fa-2x mb-2 text-secondary"></i>
+        <h5>Accreditation</h5>
+      </div>
+    </div>
+
+    <!-- COMPLAINTS CARD -->
+    <div class="col-md-6 col-lg-3">
+      <div class="card dashboard-card shadow-sm h-100 text-center p-3 category-card" data-category="complaints">
+        <i class="fas fa-exclamation-triangle fa-2x mb-2 text-secondary"></i>
+        <h5>Complaints</h5>
+      </div>
+    </div>
+
+    <!-- USER FEEDBACK CARD -->
+    <div class="col-md-6 col-lg-3">
+      <div class="card dashboard-card shadow-sm h-100 text-center p-3 category-card" data-category="feedback">
+        <i class="fas fa-comments fa-2x mb-2 text-secondary"></i>
+        <h5>User Feedback</h5>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ALL ORIGINAL SECTIONS -->
+  <!-- SETUP & ADMINISTRATION -->
+  <div id="setup" class="category-section d-none">
+    <button class="btn btn-secondary mb-3 back-button">←</button>
+    <h4>Setup & Administration</h4>
+    <div class="row g-4">
+      <!-- Voters -->
+      <div class="col-md-6 col-lg-3">
+        <div class="card dashboard-card shadow-sm h-100 text-center p-3" data-card="voters">
+          <i class="fas fa-users fa-2x mb-2 text-secondary"></i>
+          <h5>Voters</h5>
+        </div>
+      </div>
+      <!-- Registered Voters -->
+      <div class="col-md-6 col-lg-3">
+        <div class="card dashboard-card shadow-sm h-100 text-center p-3" data-card="registeredvoters">
+          <i class="fas fa-user-check fa-2x mb-2 text-secondary"></i>
+          <h5>Registered Voters</h5>
+        </div>
+      </div>
+      <!-- Non-Registered Voters -->
+      <div class="col-md-6 col-lg-3">
+        <div class="card dashboard-card shadow-sm h-100 text-center p-3" data-card="nonregisteredvoters">
+          <i class="fas fa-user-times fa-2x mb-2 text-secondary"></i>
+          <h5>Non-Registered Voters</h5>
+        </div>
+      </div>
+      <!-- Observers -->
+      <div class="col-md-6 col-lg-3">
+        <div class="card dashboard-card shadow-sm h-100 text-center p-3" data-card="observers">
+          <i class="fas fa-eye fa-2x mb-2 text-secondary"></i>
+          <h5>Observers</h5>
+        </div>
+      </div>
+      <!-- Accreditation -->
+      <div class="col-md-6 col-lg-3">
+        <div class="card dashboard-card shadow-sm h-100 text-center p-3" data-card="accreditation">
+          <i class="fas fa-certificate fa-2x mb-2 text-secondary"></i>
+          <h5>Accreditation</h5>
+        </div>
+      </div>
+      <!-- Parties -->
+      <div class="col-md-6 col-lg-3">
+        <div class="card dashboard-card shadow-sm h-100 text-center p-3" data-card="parties">
+          <i class="fas fa-flag fa-2x mb-2 text-secondary"></i>
+          <h5>Parties</h5>
+        </div>
+      </div>
+      <!-- Constituencies -->
+      <div class="col-md-6 col-lg-3">
+        <div class="card dashboard-card shadow-sm h-100 text-center p-3" data-card="constituencies">
+          <i class="fas fa-map-marker-alt fa-2x mb-2 text-secondary"></i>
+          <h5>Constituencies</h5>
+        </div>
+      </div>
+      <!-- Polling Centers -->
+      <div class="col-md-6 col-lg-3">
+        <div class="card dashboard-card shadow-sm h-100 text-center p-3" data-card="pollingcenters">
+          <i class="fas fa-building fa-2x mb-2 text-secondary"></i>
+          <h5>Polling Centers</h5>
+        </div>
+      </div>
+      <!-- Wards -->
+      <div class="col-md-6 col-lg-3">
+        <div class="card dashboard-card shadow-sm h-100 text-center p-3" data-card="wards">
+          <i class="fas fa-map fa-2x mb-2 text-secondary"></i>
+          <h5>Wards</h5>
+        </div>
+      </div>
+      <!-- Positions -->
+      <div class="col-md-6 col-lg-3">
+        <div class="card dashboard-card shadow-sm h-100 text-center p-3" data-card="positions">
+          <i class="fas fa-briefcase fa-2x mb-2 text-secondary"></i>
+          <h5>Positions</h5>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ELECTIONS MANAGEMENT -->
+  <div id="elections" class="category-section d-none">
+    <button class="btn btn-secondary mb-3 back-button">←</button>
+    <h4>Elections Management</h4>
+    <div class="row g-4">
+      <!-- Approved Candidates -->
+      <div class="col-md-6 col-lg-3">
+        <div class="card dashboard-card shadow-sm h-100 text-center p-3" data-card="candidates">
+          <i class="fas fa-user-check fa-2x mb-2 text-secondary"></i>
+          <h5>Approved Candidates</h5>
+        </div>
+      </div>
+      <!-- Registered Candidates -->
+      <div class="col-md-6 col-lg-3">
+        <div class="card dashboard-card shadow-sm h-100 text-center p-3" data-card="registeredcandidates">
+          <i class="fas fa-user-check fa-2x mb-2 text-secondary"></i>
+          <h5>Registered Candidates</h5>
+        </div>
+      </div>
+      <!-- Non-Registered Candidates -->
+      <div class="col-md-6 col-lg-3">
+        <div class="card dashboard-card shadow-sm h-100 text-center p-3" data-card="nonregisteredcandidates">
+          <i class="fas fa-user-times fa-2x mb-2 text-secondary"></i>
+          <h5>Non-Registered Candidates</h5>
+        </div>
+      </div>
+      <!-- Ongoing Elections -->
+      <div class="col-md-6 col-lg-3">
+        <div class="card dashboard-card shadow-sm h-100 text-center p-3" data-card="elections">
+          <i class="fas fa-poll fa-2x mb-2 text-secondary"></i>
+          <h5>Ongoing Elections</h5>
+        </div>
+      </div>
+      <!-- Ballots -->
+      <div class="col-md-6 col-lg-3">
+        <div class="card dashboard-card shadow-sm h-100 text-center p-3" data-card="ballots">
+          <i class="fas fa-file-alt fa-2x mb-2 text-secondary"></i>
+          <h5>Ballots</h5>
+        </div>
+      </div>
+      <!-- Alliances -->
+      <div class="col-md-6 col-lg-3">
+        <div class="card dashboard-card shadow-sm h-100 text-center p-3" data-card="alliances">
+          <i class="fas fa-handshake fa-2x mb-2 text-secondary"></i>
+          <h5>Alliances</h5>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESULTS & REPORTING -->
+  <div id="results" class="category-section d-none">
+    <button class="btn btn-secondary mb-3 back-button">←</button>
+    <h4>Results & Reporting</h4>
+    <div class="row g-4">
+      <div class="col-md-6 col-lg-3">
+        <div class="card dashboard-card shadow-sm h-100 text-center p-3" data-card="reports">
+          <i class="fas fa-file-alt fa-2x mb-2 text-secondary"></i>
+          <h5>Reports</h5>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-3">
+        <div class="card dashboard-card shadow-sm h-100 text-center p-3" data-card="results">
+          <i class="fas fa-database fa-2x mb-2 text-secondary"></i>
+          <h5>Results</h5>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AUDIT & LOGS -->
+  <div id="audit" class="category-section d-none">
+    <button class="btn btn-secondary mb-3 back-button">←</button>
+    <h4>Audit & Logs</h4>
+    <div class="row g-4">
+      <div class="col-md-6 col-lg-3">
+        <div class="card dashboard-card shadow-sm h-100 text-center p-3" data-card="auditlogs">
+          <i class="fas fa-clipboard-list fa-2x mb-2 text-secondary"></i>
+          <h5>Audit Logs</h5>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TRANSPORT & LOGISTICS -->
+  <div id="transport" class="category-section d-none">
+    <button class="btn btn-secondary mb-3 back-button">←</button>
+    <h4>Transport & Logistics</h4>
+    <div class="row g-4">
+      <div class="col-md-6 col-lg-3">
+        <div class="card dashboard-card shadow-sm h-100 text-center p-3" data-card="transport">
+          <i class="fas fa-truck fa-2x mb-2 text-secondary"></i>
+          <h5>Transport</h5>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WINNERS MANAGEMENT -->
+  <div id="winners" class="category-section d-none">
+    <button class="btn btn-secondary mb-3 back-button">←</button>
+    <h4>Winners Management</h4>
+    <div class="row g-4">
+      <div class="col-md-6 col-lg-3">
+        <div class="card dashboard-card shadow-sm h-100 text-center p-3" data-card="winners">
+          <i class="fas fa-trophy fa-2x mb-2 text-secondary"></i>
+          <h5>Winners</h5>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VOTES & BALLOTS -->
+  <div id="votes" class="category-section d-none">
+    <button class="btn btn-secondary mb-3 back-button">←</button>
+    <h4>Votes & Ballots</h4>
+    <div class="row g-4">
+      <div class="col-md-6 col-lg-3">
+        <div class="card dashboard-card shadow-sm h-100 text-center p-3" data-card="votes">
+          <i class="fas fa-vote-yea fa-2x mb-2 text-secondary"></i>
+          <h5>Votes</h5>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-3">
+        <div class="card dashboard-card shadow-sm h-100 text-center p-3" data-card="votecount">
+          <i class="fas fa-chart-pie fa-2x mb-2 text-secondary"></i>
+          <h5>Vote Count</h5>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACCREDITATION SECTION -->
+  <div id="accreditation" class="category-section d-none">
+    <button class="btn btn-secondary mb-3 back-button">←</button>
+    <h4>Accreditation</h4>
+    <div class="row g-4">
+      <!-- Accreditation Main Card -->
+      <div class="col-md-6 col-lg-3">
+        <div class="card dashboard-card shadow-sm h-100 text-center p-3" data-card="accreditation">
+          <i class="fas fa-certificate fa-2x mb-2 text-secondary"></i>
+          <h5>Accreditation</h5>
+        </div>
+      </div>
+      <!-- Media Houses Card -->
+      <div class="col-md-6 col-lg-3">
+        <div class="card dashboard-card shadow-sm h-100 text-center p-3" data-card="mediahouses">
+          <i class="fas fa-newspaper fa-2x mb-2 text-secondary"></i>
+          <h5>Media Houses</h5>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMPLAINTS SECTION -->
+  <div id="complaints" class="category-section d-none">
+    <button class="btn btn-secondary mb-3 back-button">←</button>
+    <h4>Complaints Management</h4>
+    <div class="row g-4">
+      <!-- All Complaints -->
+      <div class="col-md-6 col-lg-3">
+        <div class="card dashboard-card shadow-sm h-100 text-center p-3" data-card="complaints">
+          <i class="fas fa-exclamation-triangle fa-2x mb-2 text-secondary"></i>
+          <h5>All Complaints</h5>
+         
+        </div>
+      </div>
+      <!-- Pending Complaints -->
+      <div class="col-md-6 col-lg-3">
+        <div class="card dashboard-card shadow-sm h-100 text-center p-3" data-card="pendingcomplaints">
+          <i class="fas fa-clock fa-2x mb-2 text-warning"></i>
+          <h5>Pending Complaints</h5>
+          
+        </div>
+      </div>
+      <!-- Under Review Complaints -->
+      <div class="col-md-6 col-lg-3">
+        <div class="card dashboard-card shadow-sm h-100 text-center p-3" data-card="reviewcomplaints">
+          <i class="fas fa-search fa-2x mb-2 text-info"></i>
+          <h5>Under Review</h5>
+          <p class="text-muted small">Complaints being investigated</p>
+        </div>
+      </div>
+      <!-- Resolved Complaints -->
+      <div class="col-md-6 col-lg-3">
+        <div class="card dashboard-card shadow-sm h-100 text-center p-3" data-card="resolvedcomplaints">
+          <i class="fas fa-check-circle fa-2x mb-2 text-success"></i>
+          <h5>Resolved Complaints</h5>
+        
+        </div>
+      </div>
+      <!-- Rejected Complaints -->
+      <div class="col-md-6 col-lg-3">
+        <div class="card dashboard-card shadow-sm h-100 text-center p-3" data-card="rejectedcomplaints">
+          <i class="fas fa-times-circle fa-2x mb-2 text-danger"></i>
+          <h5>Rejected Complaints</h5>
+        </div>
+      </div>
+      <!-- Complaint Statistics -->
+      <div class="col-md-6 col-lg-3">
+        <div class="card dashboard-card shadow-sm h-100 text-center p-3" data-card="complaintstats">
+          <i class="fas fa-chart-bar fa-2x mb-2 text-primary"></i>
+          <h5>Complaint Statistics</h5>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- USER FEEDBACK SECTION -->
+  <div id="feedback" class="category-section d-none">
+    <button class="btn btn-secondary mb-3 back-button">←</button>
+    <h4>User Feedback Management</h4>
+    <div class="row g-4">
+      <!-- All Feedback -->
+      <div class="col-md-6 col-lg-3">
+        <div class="card dashboard-card shadow-sm h-100 text-center p-3" data-card="feedback">
+          <i class="fas fa-comments fa-2x mb-2 text-secondary"></i>
+          <h5>All Feedback</h5>
+        </div>
+      </div>
+      <!-- Positive Feedback -->
+      <div class="col-md-6 col-lg-3">
+        <div class="card dashboard-card shadow-sm h-100 text-center p-3" data-card="positivefeedback">
+          <i class="fas fa-thumbs-up fa-2x mb-2 text-success"></i>
+          <h5>Positive Feedback</h5>
+          
+        </div>
+      </div>
+      <!-- Negative Feedback -->
+      <div class="col-md-6 col-lg-3">
+        <div class="card dashboard-card shadow-sm h-100 text-center p-3" data-card="negativefeedback">
+          <i class="fas fa-thumbs-down fa-2x mb-2 text-danger"></i>
+          <h5>Negative Feedback</h5>
+          
+        </div>
+      </div>
+      <!-- Suggestions -->
+      <div class="col-md-6 col-lg-3">
+        <div class="card dashboard-card shadow-sm h-100 text-center p-3" data-card="suggestions">
+          <i class="fas fa-lightbulb fa-2x mb-2 text-warning"></i>
+          <h5>Suggestions</h5>
+          
+        </div>
+      </div>
+      <!-- Feedback Analytics -->
+      <div class="col-md-6 col-lg-3">
+        <div class="card dashboard-card shadow-sm h-100 text-center p-3" data-card="feedbackanalytics">
+          <i class="fas fa-chart-pie fa-2x mb-2 text-info"></i>
+          <h5>Feedback Analytics</h5>
+          
+        </div>
+      </div>
+      <!-- Response Management -->
+      <div class="col-md-6 col-lg-3">
+        <div class="card dashboard-card shadow-sm h-100 text-center p-3" data-card="feedbackresponse">
+          <i class="fas fa-reply fa-2x mb-2 text-primary"></i>
+          <h5>Response Management</h5>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<div id="card-content" class="d-none p-4">
+  <button id="back-btn" class="btn btn-outline-primary mb-3">← Back to Dashboard</button>
+  <div id="card-details"></div>
+</div>
+
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container d-flex flex-column flex-md-row justify-content-between text-center text-md-start">
+      <div class="footer-col mb-2 mb-md-0">
+        <h6>About MEC</h6>
+        <a href="#">About us</a>
+        <a href="#">Vision & Mission</a>
+        <a href="#">Commissioners</a>
+        <a href="#">Executive Management</a>
+        <a href="#">Contact us</a>
+      </div>
+      <div class="footer-col mb-2 mb-md-0">
+        <h6>Elections</h6>
+        <a href="#">2020 Presidential Results</a>
+        <a href="#">2019 Tripartite Results</a>
+        <a href="#">2019 Voter Registration Stats</a>
+        <a href="#">2014 Elections</a>
+        <a href="#">2009 General Elections</a>
+      </div>
+      <div class="footer-col">
+        <h6>Contact Us</h6>
+        <a href="#"><i class="fas fa-map-marker-alt me-1"></i>Head Office, Chisankho House, Private Bag 113, Lilongwe, Malawi</a>
+        <a href="tel:+2651822033"><i class="fas fa-phone me-1"></i>Phone: (265) 1 822 033</a>
+        <a href="fax:+2651821846"><i class="fas fa-fax me-1"></i>Fax: (265) 1 821 846</a>
+        <a href="mailto:ceo@mec.org.mw"><i class="fas fa-envelope me-1"></i>ceo@mec.org.mw</a>
+      </div>
+    </div>
+    <div class="text-center mt-3">&copy; 2025 Malawi Electoral Commission</div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+let currentSection = null;
+
+// Event delegation for all clicks
+document.body.addEventListener("click", function(e) {
+
+  // Clicking a category card → show section
+  if (e.target.closest(".category-card")) {
+    const card = e.target.closest(".category-card");
+    const sectionId = card.dataset.category;
+
+    document.getElementById("category-cards").classList.add("d-none");
+    document.querySelectorAll(".category-section").forEach(section => section.classList.add("d-none"));
+
+    const sectionEl = document.getElementById(sectionId);
+    if (sectionEl) {
+      sectionEl.classList.remove("d-none");
+      currentSection = sectionId;
+    }
+
+    document.getElementById("card-content").classList.add("d-none");
+    return;
+  }
+
+  // Clicking inside a category section card → show card details
+  if (e.target.closest(".category-section .dashboard-card")) {
+    document.querySelectorAll(".category-section").forEach(section => section.classList.add("d-none"));
+    document.getElementById("category-cards").classList.add("d-none");
+
+    document.getElementById("card-content").classList.remove("d-none");
+
+    const card = e.target.closest(".dashboard-card");
+    document.getElementById("card-details").innerHTML = `<h5>${card.querySelector("h5").innerText} Details</h5><p>Details loaded here...</p>`;
+    return;
+  }
+
+  // Back button inside sections → go back to category cards
+  if (e.target.classList.contains("back-button")) {
+    document.querySelectorAll(".category-section").forEach(section => section.classList.add("d-none"));
+    document.getElementById("category-cards").classList.remove("d-none");
+    currentSection = null;
+    return;
+  }
+
+  // Back to Dashboard inside card content
+  if (e.target.id === "back-btn") {
+    document.getElementById("card-content").classList.add("d-none");
+
+    if (currentSection) {
+      document.getElementById(currentSection).classList.remove("d-none");
+    } else {
+      document.getElementById("category-cards").classList.remove("d-none");
+    }
+  }
+});
+</script>
+
+<script src="/js/script.js" defer></script>
+    
+</body>
+</html>
