@@ -548,12 +548,6 @@ app.get("/api/mediahouses", requireAuth, (req, res) => {
     res.json(results);
   });
 });
-app.get("/api/feedbackresponse", requireAuth, (req, res) => {
-  db.query("SELECT * FROM user_feedback", (err, results) => {
-    if (err) return res.status(500).json({ error: err.message });
-    res.json(results);
-  });
-});
 // Add these missing API routes
 app.get("/api/pendingcomplaints", requireAuth, (req, res) => {
   db.query("SELECT * FROM complaints WHERE status = 'pending'", (err, results) => {
