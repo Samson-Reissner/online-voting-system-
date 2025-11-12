@@ -5,6 +5,7 @@
 const express = require("express");
 const path = require("path");
 const mysql = require("mysql2");
+const session = require("express-session"); // ADD THIS
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -17,6 +18,14 @@ const ADMIN_PASSWORD = "admin123"; // change as desired
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// ADD SESSION MIDDLEWARE
+app.use(session({
+  secret: 'mec-election-system-secret-key-2025', // Change this in production
+  resave: false,
+  saveUninitialized: false,
+  cookie: { secure: false, maxAge: 24 * 60 * 60 * 1000 } // 24 hours
+}));
 
 // Database connection(pool)
 const db = mysql.createPool({
@@ -49,6 +58,17 @@ db.getConnection((err, connection) => {
 app.use(express.static(path.join(__dirname, "public")));
 
 // =======================
+// AUTHENTICATION MIDDLEWARE
+// =======================
+function requireAuth(req, res, next) {
+  if (req.session.user && req.session.user.loggedIn) {
+    next();
+  } else {
+    res.redirect('/');
+  }
+}
+
+// =======================
 // Page Routes
 // =======================
 
@@ -57,12 +77,16 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "htmlFiles", "login.html"));
 });
 
-// Handle login POST request
+// Handle login POST request - UPDATED WITH SESSION
 app.post("/login", (req, res) => {
   const { username, password } = req.body;
 
   if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
-    // Successful login — redirect to dashboard
+    // Successful login — create session
+    req.session.user = {
+      username: username,
+      loggedIn: true
+    };
     res.redirect("/dashboard");
   } else {
     // Failed login — send error message
@@ -70,56 +94,61 @@ app.post("/login", (req, res) => {
   }
 });
 
-// Create Report page
-app.get("/create-report", (req, res) => {
+// Create Report page - PROTECTED
+app.get("/create-report", requireAuth, (req, res) => {
   res.sendFile(path.join(__dirname, "public", "htmlFiles", "create-report.html"));
 });
 
-// Dashboard page
-app.get("/dashboard", (req, res) => {
+// Dashboard page - PROTECTED
+app.get("/dashboard", requireAuth, (req, res) => {
   res.sendFile(path.join(__dirname, "public", "htmlFiles", "dashboard.html"));
 });
 
-// Sidebar navigation routes
-app.get("/mUsers", (req, res) => {
+// Sidebar navigation routes - PROTECTED
+app.get("/mUsers", requireAuth, (req, res) => {
   res.redirect("/dashboard");
 });
 
-app.get("/OpenClose", (req, res) => {
+app.get("/OpenClose", requireAuth, (req, res) => {
   res.redirect("/dashboard");
 });
 
-app.get("/calculateVotes", (req, res) => {
+app.get("/calculateVotes", requireAuth, (req, res) => {
   res.redirect("/dashboard");
 });
 
-app.get("/mResults", (req, res) => {
+app.get("/mResults", requireAuth, (req, res) => {
   res.redirect("/dashboard");
 });
 
-app.get("/uploadWinners", (req, res) => {
+app.get("/uploadWinners", requireAuth, (req, res) => {
   res.redirect("/dashboard");
 });
 
-app.get("/generateReports", (req, res) => {
+app.get("/generateReports", requireAuth, (req, res) => {
   res.redirect("/create-report");
 });
 
-app.get("/settings", (req, res) => {
+app.get("/settings", requireAuth, (req, res) => {
   res.redirect("/dashboard");
 });
 
-// Logout route
+// Logout route - UPDATED
 app.get("/logout", (req, res) => {
-  res.redirect("/"); // Redirect to login page
+  req.session.destroy((err) => {
+    if (err) {
+      console.log('Error destroying session:', err);
+    }
+    res.redirect("/");
+  });
 });
 
 // =======================
-// API Routes
+// API Routes - PROTECTED
 // =======================
 
 // Get all voters
-app.get("/api/voters", (req, res) => {
+app.get("/api/voters", requireAuth, (req, res) => {
   db.query("SELECT * FROM voters", (err, results) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json(results);
@@ -127,7 +156,7 @@ app.get("/api/voters", (req, res) => {
 });
 
 // Get all observers
-app.get("/api/observers", (req, res) => {
+app.get("/api/observers", requireAuth, (req, res) => {
   db.query("SELECT * FROM observers", (err, results) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json(results);
@@ -135,7 +164,7 @@ app.get("/api/observers", (req, res) => {
 });
 
 // Get all accreditation
-app.get("/api/accreditation", (req, res) => {
+app.get("/api/accreditation", requireAuth, (req, res) => {
   db.query("SELECT * FROM accreditation", (err, results) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json(results);
@@ -143,7 +172,7 @@ app.get("/api/accreditation", (req, res) => {
 });
 
 // Get all parties
-app.get("/api/parties", (req, res) => {
+app.get("/api/parties", requireAuth, (req, res) => {
   db.query("SELECT * FROM parties", (err, results) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json(results);
@@ -151,7 +180,7 @@ app.get("/api/parties", (req, res) => {
 });
 
 // Get all constituencies
-app.get("/api/constituencies", (req, res) => {
+app.get("/api/constituencies", requireAuth, (req, res) => {
   db.query("SELECT * FROM constituencies", (err, results) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json(results);
@@ -159,7 +188,7 @@ app.get("/api/constituencies", (req, res) => {
 });
 
 // Get all polling centers
-app.get("/api/pollingcenters", (req, res) => {
+app.get("/api/pollingcenters", requireAuth, (req, res) => {
   db.query("SELECT * FROM polling_centers", (err, results) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json(results);
@@ -167,7 +196,7 @@ app.get("/api/pollingcenters", (req, res) => {
 });
 
 // Get all candidates
-app.get("/api/candidates", (req, res) => {
+app.get("/api/candidates", requireAuth, (req, res) => {
   db.query("SELECT * FROM candidates", (err, results) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json(results);
@@ -175,7 +204,7 @@ app.get("/api/candidates", (req, res) => {
 });
 
 // Get all elections
-app.get("/api/elections", (req, res) => {
+app.get("/api/elections", requireAuth, (req, res) => {
   db.query("SELECT * FROM elections", (err, results) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json(results);
@@ -183,7 +212,7 @@ app.get("/api/elections", (req, res) => {
 });
 
 // Get all complaints
-app.get("/api/complaints", (req, res) => {
+app.get("/api/complaints", requireAuth, (req, res) => {
   db.query("SELECT * FROM complaints", (err, results) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json(results);
@@ -191,7 +220,7 @@ app.get("/api/complaints", (req, res) => {
 });
 
 // Get all security incidents
-app.get("/api/security", (req, res) => {
+app.get("/api/security", requireAuth, (req, res) => {
   db.query("SELECT * FROM security_incidents", (err, results) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json(results);
@@ -199,7 +228,7 @@ app.get("/api/security", (req, res) => {
 });
 
 // Get all user feedback
-app.get("/api/feedback", (req, res) => {
+app.get("/api/feedback", requireAuth, (req, res) => {
   db.query("SELECT * FROM user_feedback", (err, results) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json(results);
@@ -207,11 +236,89 @@ app.get("/api/feedback", (req, res) => {
 });
 
 // =======================
-// REPORTS API ROUTES
+// MISSING COMPLAINTS API ROUTES - ADD THESE
+// =======================
+
+app.get("/api/pendingcomplaints", requireAuth, (req, res) => {
+  db.query("SELECT * FROM complaints WHERE status = 'pending'", (err, results) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(results);
+  });
+});
+
+app.get("/api/reviewcomplaints", requireAuth, (req, res) => {
+  db.query("SELECT * FROM complaints WHERE status = 'under review'", (err, results) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(results);
+  });
+});
+
+app.get("/api/resolvedcomplaints", requireAuth, (req, res) => {
+  db.query("SELECT * FROM complaints WHERE status = 'resolved'", (err, results) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(results);
+  });
+});
+
+app.get("/api/rejectedcomplaints", requireAuth, (req, res) => {
+  db.query("SELECT * FROM complaints WHERE status = 'rejected'", (err, results) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(results);
+  });
+});
+
+app.get("/api/complaintstats", requireAuth, (req, res) => {
+  db.query("SELECT status, COUNT(*) as count FROM complaints GROUP BY status", (err, results) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(results);
+  });
+});
+
+// =======================
+// MISSING FEEDBACK API ROUTES - ADD THESE
+// =======================
+
+app.get("/api/positivefeedback", requireAuth, (req, res) => {
+  db.query("SELECT * FROM user_feedback WHERE sentiment = 'positive' OR rating >= 4", (err, results) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(results);
+  });
+});
+
+app.get("/api/negativefeedback", requireAuth, (req, res) => {
+  db.query("SELECT * FROM user_feedback WHERE sentiment = 'negative' OR rating <= 2", (err, results) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(results);
+  });
+});
+
+app.get("/api/suggestions", requireAuth, (req, res) => {
+  db.query("SELECT * FROM user_feedback WHERE type = 'suggestion'", (err, results) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(results);
+  });
+});
+
+app.get("/api/feedbackanalytics", requireAuth, (req, res) => {
+  db.query("SELECT type, sentiment, COUNT(*) as count FROM user_feedback GROUP BY type, sentiment", (err, results) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(results);
+  });
+});
+
+app.get("/api/feedbackresponse", requireAuth, (req, res) => {
+  db.query("SELECT f.*, r.response_text, r.responded_by, r.response_date FROM user_feedback f LEFT JOIN feedback_responses r ON f.feedback_id = r.feedback_id", (err, results) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(results);
+  });
+});
+
+// =======================
+// REPORTS API ROUTES - PROTECTED
 // =======================
 
 // POST /api/reports - Create new report
-app.post("/api/reports", (req, res) => {
+app.post("/api/reports", requireAuth, (req, res) => {
   const { title, body, created_by, election_id } = req.body;
 
   // Validate required fields
@@ -261,7 +368,7 @@ app.post("/api/reports", (req, res) => {
 });
 
 // GET /api/reports - Get all reports for dashboard
-app.get("/api/reports", (req, res) => {
+app.get("/api/reports", requireAuth, (req, res) => {
   const query = `
     SELECT r.*, u.username as created_by_name, e.name as election_name 
     FROM reports r 
@@ -287,7 +394,7 @@ app.get("/api/reports", (req, res) => {
 });
 
 // Get all results
-app.get("/api/results", (req, res) => {
+app.get("/api/results", requireAuth, (req, res) => {
   db.query("SELECT * FROM results", (err, results) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json(results);
@@ -295,7 +402,7 @@ app.get("/api/results", (req, res) => {
 });
 
 // Get all audit logs
-app.get("/api/auditlogs", (req, res) => {
+app.get("/api/auditlogs", requireAuth, (req, res) => {
   db.query("SELECT * FROM audit_logs", (err, results) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json(results);
@@ -303,11 +410,11 @@ app.get("/api/auditlogs", (req, res) => {
 });
 
 // =======================
-// ADDITIONAL API ROUTES
+// ADDITIONAL API ROUTES - PROTECTED
 // =======================
 
 // Get all wards
-app.get("/api/wards", (req, res) => {
+app.get("/api/wards", requireAuth, (req, res) => {
   db.query("SELECT * FROM wards", (err, results) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json(results);
@@ -315,7 +422,7 @@ app.get("/api/wards", (req, res) => {
 });
 
 // Get all positions
-app.get("/api/positions", (req, res) => {
+app.get("/api/positions", requireAuth, (req, res) => {
   db.query("SELECT * FROM positions", (err, results) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json(results);
@@ -323,7 +430,7 @@ app.get("/api/positions", (req, res) => {
 });
 
 // Get all ballots
-app.get("/api/ballots", (req, res) => {
+app.get("/api/ballots", requireAuth, (req, res) => {
   db.query("SELECT * FROM ballot", (err, results) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json(results);
@@ -331,7 +438,7 @@ app.get("/api/ballots", (req, res) => {
 });
 
 // Get all alliances
-app.get("/api/alliances", (req, res) => {
+app.get("/api/alliances", requireAuth, (req, res) => {
   db.query("SELECT * FROM alliances", (err, results) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json(results);
@@ -339,7 +446,7 @@ app.get("/api/alliances", (req, res) => {
 });
 
 // Get all transport data
-app.get("/api/transport", (req, res) => {
+app.get("/api/transport", requireAuth, (req, res) => {
   db.query("SELECT * FROM transport", (err, results) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json(results);
@@ -347,7 +454,7 @@ app.get("/api/transport", (req, res) => {
 });
 
 // Get all transfer data
-app.get("/api/transfer", (req, res) => {
+app.get("/api/transfer", requireAuth, (req, res) => {
   db.query("SELECT * FROM transfer", (err, results) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json(results);
@@ -355,7 +462,7 @@ app.get("/api/transfer", (req, res) => {
 });
 
 // Get all logistics data
-app.get("/api/logistics", (req, res) => {
+app.get("/api/logistics", requireAuth, (req, res) => {
   db.query("SELECT * FROM logistics", (err, results) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json(results);
@@ -363,22 +470,15 @@ app.get("/api/logistics", (req, res) => {
 });
 
 // Get all winners
-app.get("/api/winners", (req, res) => {
+app.get("/api/winners", requireAuth, (req, res) => {
   db.query("SELECT * FROM winners", (err, results) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json(results);
   });
 });
 
-app.get("/api/feedback", (req, res) => {
-  db.query("SELECT * FROM feedback", (err, results) => {
-    if (err) return res.status(500).json({ error: err.message });
-    res.json(results);
-  });
-});
-
 // Get all election winners
-app.get("/api/electionwinners", (req, res) => {
+app.get("/api/electionwinners", requireAuth, (req, res) => {
   db.query("SELECT * FROM election_winners", (err, results) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json(results);
@@ -386,7 +486,7 @@ app.get("/api/electionwinners", (req, res) => {
 });
 
 // Get all votes
-app.get("/api/votes", (req, res) => {
+app.get("/api/votes", requireAuth, (req, res) => {
   db.query("SELECT * FROM votes", (err, results) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json(results);
@@ -394,7 +494,7 @@ app.get("/api/votes", (req, res) => {
 });
 
 // Get vote count data
-app.get("/api/votecount", (req, res) => {
+app.get("/api/votecount", requireAuth, (req, res) => {
   db.query("SELECT candidate_id, COUNT(*) as vote_count FROM votes GROUP BY candidate_id", (err, results) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json(results);
@@ -402,7 +502,7 @@ app.get("/api/votecount", (req, res) => {
 });
 
 // Get ballot management data
-app.get("/api/ballotmanagement", (req, res) => {
+app.get("/api/ballotmanagement", requireAuth, (req, res) => {
   db.query("SELECT * FROM ballot_management", (err, results) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json(results);
@@ -410,7 +510,7 @@ app.get("/api/ballotmanagement", (req, res) => {
 });
 
 // Get registered candidates
-app.get("/api/registeredcandidates", (req, res) => {
+app.get("/api/registeredcandidates", requireAuth, (req, res) => {
   db.query("SELECT * FROM candidates WHERE registration_status = 'Registered'", (err, results) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json(results);
@@ -418,7 +518,7 @@ app.get("/api/registeredcandidates", (req, res) => {
 });
 
 // Get non-registered candidates
-app.get("/api/nonregisteredcandidates", (req, res) => {
+app.get("/api/nonregisteredcandidates", requireAuth, (req, res) => {
   db.query("SELECT * FROM candidates WHERE registration_status = 'Not Registered'", (err, results) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json(results);
@@ -426,7 +526,7 @@ app.get("/api/nonregisteredcandidates", (req, res) => {
 });
 
 // Get registered voters
-app.get("/api/registeredvoters", (req, res) => {
+app.get("/api/registeredvoters", requireAuth, (req, res) => {
   db.query("SELECT * FROM voters WHERE registration_status = 'Registered'", (err, results) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json(results);
@@ -434,7 +534,7 @@ app.get("/api/registeredvoters", (req, res) => {
 });
 
 // Get non-registered voters
-app.get("/api/nonregisteredvoters", (req, res) => {
+app.get("/api/nonregisteredvoters", requireAuth, (req, res) => {
   db.query("SELECT * FROM voters WHERE registration_status = 'Not Registered'", (err, results) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json(results);
@@ -442,8 +542,78 @@ app.get("/api/nonregisteredvoters", (req, res) => {
 });
 
 // Get all media houses
-app.get("/api/mediahouses", (req, res) => {
+app.get("/api/mediahouses", requireAuth, (req, res) => {
   db.query("SELECT * FROM media_houses", (err, results) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(results);
+  });
+});
+app.get("/api/feedbackresponse", requireAuth, (req, res) => {
+  db.query("SELECT * FROM user_feedback", (err, results) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(results);
+  });
+});
+// Add these missing API routes
+app.get("/api/pendingcomplaints", requireAuth, (req, res) => {
+  db.query("SELECT * FROM complaints WHERE status = 'pending'", (err, results) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(results);
+  });
+});
+
+app.get("/api/reviewcomplaints", requireAuth, (req, res) => {
+  db.query("SELECT * FROM complaints WHERE status = 'under review'", (err, results) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(results);
+  });
+});
+
+app.get("/api/resolvedcomplaints", requireAuth, (req, res) => {
+  db.query("SELECT * FROM complaints WHERE status = 'resolved'", (err, results) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(results);
+  });
+});
+
+app.get("/api/rejectedcomplaints", requireAuth, (req, res) => {
+  db.query("SELECT * FROM complaints WHERE status = 'rejected'", (err, results) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(results);
+  });
+});
+
+app.get("/api/complaintstats", requireAuth, (req, res) => {
+  db.query("SELECT status, COUNT(*) as count FROM complaints GROUP BY status", (err, results) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(results);
+  });
+});
+
+// Feedback routes
+app.get("/api/positivefeedback", requireAuth, (req, res) => {
+  db.query("SELECT * FROM user_feedback WHERE sentiment = 'positive'", (err, results) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(results);
+  });
+});
+
+app.get("/api/negativefeedback", requireAuth, (req, res) => {
+  db.query("SELECT * FROM user_feedback WHERE sentiment = 'negative'", (err, results) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(results);
+  });
+});
+
+app.get("/api/suggestions", requireAuth, (req, res) => {
+  db.query("SELECT * FROM user_feedback WHERE type = 'suggestion'", (err, results) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(results);
+  });
+});
+
+app.get("/api/feedbackanalytics", requireAuth, (req, res) => {
+  db.query("SELECT type, sentiment, COUNT(*) as count FROM user_feedback GROUP BY type, sentiment", (err, results) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json(results);
   });
@@ -454,5 +624,6 @@ app.get("/api/mediahouses", (req, res) => {
 // =======================
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+  console.log(`Login with: username="admin", password="admin123"`);
   console.log(`Create reports at: http://localhost:${PORT}/create-report`);
 });

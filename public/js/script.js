@@ -2,6 +2,48 @@ document.addEventListener("DOMContentLoaded", () => {
   const contentArea = document.getElementById("card-details");
   const backBtn = document.getElementById("back-btn");
 
+  // Define apiRoutes at the top level of the DOMContentLoaded callback
+  const apiRoutes = {
+    'voters': '/api/voters',
+    'registeredvoters': '/api/registeredvoters',
+    'nonregisteredvoters': '/api/nonregisteredvoters',
+    'observers': '/api/observers',
+    'accreditation': '/api/accreditation',
+    'parties': '/api/parties',
+    'constituencies': '/api/constituencies',
+    'pollingcenters': '/api/pollingcenters',
+    'candidates': '/api/candidates',
+    'registeredcandidates': '/api/registeredcandidates',
+    'nonregisteredcandidates': '/api/nonregisteredcandidates',
+    'elections': '/api/elections',
+    'reports': '/api/reports',
+    'results': '/api/results',
+    'auditlogs': '/api/auditlogs',
+    'wards': '/api/wards',
+    'positions': '/api/positions',
+    'ballots': '/api/ballots',
+    'alliances': '/api/alliances',
+    'transport': '/api/transport',
+    'complaints': '/api/complaints',
+    'feedback': '/api/feedback',
+    'winners': '/api/winners',
+    'votes': '/api/votes',
+    'votecount': '/api/votecount',
+    'mediahouses': '/api/mediahouses',
+    // Add the new complaint routes
+    'pendingcomplaints': '/api/pendingcomplaints',
+    'reviewcomplaints': '/api/reviewcomplaints',
+    'resolvedcomplaints': '/api/resolvedcomplaints',
+    'rejectedcomplaints': '/api/rejectedcomplaints',
+    'complaintstats': '/api/complaintstats',
+    // Add the new feedback routes
+    'positivefeedback': '/api/positivefeedback',
+    'negativefeedback': '/api/negativefeedback',
+    'suggestions': '/api/suggestions',
+    'feedbackanalytics': '/api/feedbackanalytics',
+    'feedbackresponse': '/api/feedbackresponse'
+  };
+
   // Event delegation for card clicks
   document.body.addEventListener("click", function(e) {
     // Check if a dashboard card was clicked
@@ -28,35 +70,6 @@ document.addEventListener("DOMContentLoaded", () => {
   function loadCardData(cardType) {
     contentArea.innerHTML = '<div class="text-center"><div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div><p>Loading data...</p></div>';
 
-const apiRoutes = {
-  'voters': '/api/voters',
-  'registeredvoters': '/api/registeredvoters',
-  'nonregisteredvoters': '/api/nonregisteredvoters',
-  'observers': '/api/observers',
-  'accreditation': '/api/accreditation',
-  'parties': '/api/parties',
-  'constituencies': '/api/constituencies',
-  'pollingcenters': '/api/pollingcenters',
-  'candidates': '/api/candidates',
-  'registeredcandidates': '/api/registeredcandidates',
-  'nonregisteredcandidates': '/api/nonregisteredcandidates',
-  'elections': '/api/elections',
-  'reports': '/api/reports',
-  'results': '/api/results',
-  'auditlogs': '/api/auditlogs',
-  'wards': '/api/wards',
-  'positions': '/api/positions',
-  'ballots': '/api/ballots',
-  'alliances': '/api/alliances',
-  'transport': '/api/transport',
-  'complaints': '/api/complaints',
-  'feedback': '/api/feedback',
-  'winners': '/api/winners',
-  'votes': '/api/votes',
-  'votecount': '/api/votecount',
-  'mediahouses': '/api/mediahouses'
-    };
-
     const apiUrl = apiRoutes[cardType];
     
     if (!apiUrl) {
@@ -66,16 +79,27 @@ const apiRoutes = {
 
     fetch(apiUrl)
       .then(res => {
+        if (res.status === 401) {
+          // Redirect to login if unauthorized
+          window.location.href = '/';
+          return;
+        }
         if (!res.ok) throw new Error(`HTTP error ${res.status}`);
         return res.json();
       })
       .then(data => {
-        if (!data || data.length === 0) {
+        // Handle both array format and success/error format
+        let displayData = data;
+        if (data && data.success !== undefined) {
+          displayData = data.data || [];
+        }
+        
+        if (!displayData || displayData.length === 0) {
           contentArea.innerHTML = `<h4>${capitalizeFirstLetter(cardType)}</h4><p>No records found.</p>`;
           return;
         }
 
-        displayDataAsTable(cardType, data);
+        displayDataAsTable(cardType, displayData);
       })
       .catch(err => {
         console.error(`Error fetching data for ${cardType}:`, err);
@@ -84,6 +108,12 @@ const apiRoutes = {
   }
 
   function displayDataAsTable(cardType, data) {
+    // Check if data is an array and has items
+    if (!Array.isArray(data) || data.length === 0) {
+      contentArea.innerHTML = `<h4>${capitalizeFirstLetter(cardType)}</h4><p>No data available.</p>`;
+      return;
+    }
+
     const headers = Object.keys(data[0]);
     const tableHtml = `
       <h4 class="mb-4">${capitalizeFirstLetter(cardType)} Management</h4>
@@ -117,11 +147,10 @@ const apiRoutes = {
   function formatCellValue(value) {
     if (value === null || value === undefined) return '-';
     if (typeof value === 'boolean') return value ? 'Yes' : 'No';
+    if (typeof value === 'object') return JSON.stringify(value);
     return value.toString();
   }
 });
-
-// In your dashboard.js or script.js file
 
 // Function to handle report creation from dashboard
 function handleCreateReport() {
@@ -215,7 +244,7 @@ async function loadDashboardReports() {
                 <tr>
                   <td>
                     <strong class="text-primary">${report.title}</strong>
-                    ${report.body.length > 50 ? 
+                    ${report.body && report.body.length > 50 ? 
                       `<br><small class="text-muted">${report.body.substring(0, 50)}...</small>` : ''}
                   </td>
                   <td>${report.election_name || 'N/A'}</td>
@@ -263,6 +292,18 @@ function refreshReports() {
 
 // Call this when reports section is shown
 function showReportsSection() {
-  // Your existing code...
   setTimeout(loadDashboardReports, 100);
+}
+
+// Add missing functions that are referenced but not defined
+function viewReport(reportId) {
+  // Implement view report functionality
+  console.log('View report:', reportId);
+  alert(`View report ${reportId} - functionality to be implemented`);
+}
+
+function downloadReport(reportId) {
+  // Implement download report functionality
+  console.log('Download report:', reportId);
+  alert(`Download report ${reportId} - functionality to be implemented`);
 }
